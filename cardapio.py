@@ -1,20 +1,37 @@
-from conexao import get_conexao
-from psycopg2.extras import RealDictCursor
 from flask import jsonify
 
+
+itens = [
+    {
+        "id": 1,
+        "nome": "Sãobolo",
+        "descricao": "Bolo do São Paulo",
+        "preco": 49.99,
+        "foto": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRUgm5a7_Mnbi2oxJvWg_ul2R5Foed7FD0BvA&s"
+    },
+    {
+        "id": 2,
+        "nome": "Bolo Ceni",
+        "descricao": "Bolo em homenagem ao Idolo",
+        "preco": 59.90,
+        "foto": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQeWQoa-Uju9_liiRcqoYrmutG_UbccdnEOoA&s"
+    },
+    {
+        "id": 3,
+        "nome": "Bolo Tricolor",
+        "descricao": "Bolo dos Campeões",
+        "preco": 30.30,
+        "foto": "https://aninhamiranda.wordpress.com/wp-content/uploads/2013/06/4.jpg"
+    }
+]
+
+itens_por_id = {item["id"]: item for item in itens}
+
 def buscar_cardapio():
-    conn = get_conexao()
-    cursor = conn.cursor(cursor_factory=RealDictCursor)
-    cursor.execute("SELECT * FROM cardapio")
-    cardapio = cursor.fetchall()
-    cursor.close()
-    conn.close()
-    return jsonify(cardapio) 
+    return jsonify(itens)
 
 def buscar_por_id(item_id):
-    return {
-        "id": 1,
-        "nome": "Chocomoça",
-        "descricao": "Bolo de chocolate com ninho",
-        "preco": 49.99,
-    }
+    item = itens_por_id.get(item_id)
+    if item is None:
+        return jsonify({"erro": "Item não encontrado"}), 404
+    return jsonify(item)
